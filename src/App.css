@@ -1,0 +1,10 @@
+.my-table .table-header > div {
+    border-bottom: 1px solid black;
+}
+
+.my-table .col-0 {
+    width: 10%;
+}
+.my-table .col-2 {
+    width: 20%;
+}

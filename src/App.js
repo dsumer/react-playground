@@ -1,5 +1,6 @@
 import React from 'react';
 import Table from './component/Table/Table';
+import './App.css';
 
 class App extends React.Component {
     constructor(props) {
@@ -16,14 +17,14 @@ class App extends React.Component {
                 },
                 {
                     name: 'Gistav',
-                    age: 33
+                    age: 13
                 }
             ]
         };
     }
 
     onChangeName(index, e) {
-        let newName = e.target.value;
+        const newName = e.target.value;
         this.setState((prevState) => {
             prevState.data[index].name = newName;
             prevState.data[index].age++;
@@ -48,15 +49,59 @@ class App extends React.Component {
         });
     }
 
-    sortByName(ascending) {
+    sortByAlphabetical(prop, ascending) {
         this.setState((prevState) => {
             prevState.data.sort((a, b) => {
-                if(a.name < b.name) return ascending ? -1 : 1;
-                if(a.name > b.name) return ascending ? 1 : -1;
+                if (a[prop] < b[prop]) {
+                    return ascending ? -1 : 1;
+                }
+                if (a[prop] > b[prop]) {
+                    return ascending ? 1 : -1;
+                }
                 return 0;
             });
             return prevState;
         });
+    }
+
+    sortByNumber(prop, ascending) {
+        this.setState((prevState) => {
+            prevState.data.sort((a, b) => {
+                if (ascending) {
+                    return a[prop] - b[prop];
+                } else {
+                    return b[prop] - a[prop];
+                }
+            });
+            return prevState;
+        });
+    }
+
+    getTable(className) {
+        return (
+            <Table className={className} header={[
+                {text: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
+                {text: 'Age', sortBy: this.sortByNumber.bind(this, 'age')},
+                {text: 'Actions'}
+            ]}>
+                {
+                    this.state.data.map((row, index) => {
+                        return (
+                            <div key={index} className="table-row">
+                                <div className="table-column">
+                                    <input type="text" value={row.name}
+                                           onChange={this.onChangeName.bind(this, index)}/>
+                                </div>
+                                <div className="table-column">{row.age}</div>
+                                <div className="table-column">
+                                    <button onClick={this.remove.bind(this, index)}>remove</button>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </Table>
+        );
     }
 
     render() {
@@ -66,26 +111,9 @@ class App extends React.Component {
                     <button onClick={this.add.bind(this)}>add</button>
                 </div>
                 <div>
-                    <Table header={[
-                        {text: 'Name', sortBy: this.sortByName.bind(this)},
-                        {text: 'Age'},
-                        {text: 'Actions'}
-                    ]}>
-                        {
-                            this.state.data.map((row, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>
-                                            <input type="text" value={row.name}
-                                                   onChange={this.onChangeName.bind(this, index)} />
-                                        </td>
-                                        <td>{row.age}</td>
-                                        <td><button onClick={this.remove.bind(this, index)}>remove</button></td>
-                                    </tr>
-                                )
-                            })
-                        }
-                    </Table>
+                    {this.getTable('')}
+                    <br/><br/><br/>
+                    {this.getTable('my-table')}
                 </div>
             </div>
         );
