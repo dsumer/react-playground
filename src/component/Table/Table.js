@@ -1,4 +1,5 @@
 import React from 'react';
+import './Table.css';
 
 class Table extends React.Component {
     constructor(props) {
@@ -10,33 +11,57 @@ class Table extends React.Component {
         };
     }
 
-    getHeader() {
-        return this.props.header.map((column, index) => {
-            let props = {
-                key: index
-            };
-            if (column.sortBy) {
-                if (this.sortBy.index == index) {
+    getHeaderClass(column, index) {
+        let className = 'col-' + index;
+
+        if (column.sortBy) {
+            className += ' sortable';
+
+            if (this.sortBy.index === index) {
+                className += ' active';
+
+                if (!this.sortBy.ascending) {
+                    className += ' desc';
+                }
+            }
+        }
+
+        return className;
+    }
+
+    getSortBy(column, index) {
+        if (column.sortBy) {
+            return () => {
+                if (this.sortBy.index === index) {
                     this.sortBy.ascending = !this.sortBy.ascending;
                 } else {
                     this.sortBy.index = index;
                     this.sortBy.ascending = true;
                 }
 
-                props.onClick = column.sortBy.bind(null, this.sortBy.ascending);
-            }
-            return <th {...props}>{column.text}</th>;
+                column.sortBy.bind(null, this.sortBy.ascending)();
+            };
+        }
+        return null;
+    }
+
+    getHeader() {
+        return this.props.header.map((column, index) => {
+            return <div key={index} onClick={this.getSortBy(column, index)}
+                       className={this.getHeaderClass(column, index)}>{column.text}</div>;
         });
     }
 
     render() {
         return (
-            <table>
-                <thead>
-                    <tr>{this.getHeader()}</tr>
-                </thead>
-                <tbody>{this.props.children}</tbody>
-            </table>
+            <div className={'table ' + this.props.className}>
+                <div className="table-header">
+                    {this.getHeader()}
+                </div>
+                <div className="table-body">
+                    {this.props.children}
+                </div>
+            </div>
         );
     }
 }
