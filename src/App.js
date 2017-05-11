@@ -1,6 +1,6 @@
-import React from 'react';
-import {Table, Row, Column} from './component/Table';
-import './App.css';
+import React from "react";
+import {Table, Column} from "./component/Table";
+import "./App.css";
 
 class App extends React.Component {
     constructor(props) {
@@ -79,28 +79,27 @@ class App extends React.Component {
 
     getTable(className) {
         return (
-            <Table className={className} header={[
-                {text: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
-                {text: 'Age', sortBy: this.sortByNumber.bind(this, 'age')},
-                {text: 'Actions'}
-            ]}>
-                {
-                    this.state.data.map((row, index) => {
-                        return (
-                            <Row key={index}>
-                                <Column>
-                                    <input type="text" value={row.name}
-                                           onChange={this.onChangeName.bind(this, index)}/>
-                                </Column>
-                                <Column>{row.age}</Column>
-                                <Column>
-                                    <button onClick={this.remove.bind(this, index)}>remove</button>
-                                </Column>
-                            </Row>
-                        )
-                    })
-                }
-            </Table>
+            <Table className={className}
+                   data={this.state.data}
+                   header={[
+                       {text: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
+                       {text: 'Age', sortBy: this.sortByNumber.bind(this, 'age')},
+                       {text: 'Actions'}
+                   ]}
+                   columns={(row, index) => {
+                       return [
+                           <Column>
+                               <input type="text" value={row.name}
+                                      onChange={this.onChangeName.bind(this, index)}/>
+                           </Column>,
+                           <Column>
+                               {row.age}
+                           </Column>,
+                           <Column>
+                               <button onClick={this.remove.bind(this, index)}>remove</button>
+                           </Column>
+                       ];
+                   }}/>
         );
     }
 
