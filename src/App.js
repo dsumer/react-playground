@@ -9,6 +9,7 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            filterText: '',
             data: [
                 {
                     name: 'Test',
@@ -90,10 +91,16 @@ class App extends React.Component {
         });
     }
 
+    getFilteredData() {
+        return this.state.data.filter((row) => {
+            return row.name.toLowerCase().indexOf(this.state.filterText.toLowerCase()) > -1;
+        });
+    }
+
     getTable(className) {
         return (
             <Table className={className}
-                   data={this.state.data}
+                   data={this.getFilteredData()}
                    header={[
                        {text: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
                        {text: 'Age', sortBy: this.sortBy.bind(this, 'age')},
@@ -125,9 +132,20 @@ class App extends React.Component {
         );
     }
 
+    onChangeFilter(e) {
+        const newFilter = e.target.value;
+        this.setState((prevState) => {
+            prevState.filterText = newFilter;
+            return prevState;
+        });
+    }
+
     render() {
         return (
             <div>
+                <div>
+                    <input type="text" value={this.state.filterText} onChange={this.onChangeFilter.bind(this)} />
+                </div>
                 <div>
                     <button onClick={this.add.bind(this)}>add</button>
                 </div>
