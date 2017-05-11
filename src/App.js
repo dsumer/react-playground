@@ -1,5 +1,5 @@
 import React from 'react';
-import Table from './component/Table/Table';
+import {Table, Row, Column} from './component/Table';
 import './App.css';
 
 class App extends React.Component {
@@ -87,16 +87,16 @@ class App extends React.Component {
                 {
                     this.state.data.map((row, index) => {
                         return (
-                            <div key={index} className="table-row">
-                                <div className="table-column">
+                            <Row key={index}>
+                                <Column>
                                     <input type="text" value={row.name}
                                            onChange={this.onChangeName.bind(this, index)}/>
-                                </div>
-                                <div className="table-column">{row.age}</div>
-                                <div className="table-column">
+                                </Column>
+                                <Column>{row.age}</Column>
+                                <Column>
                                     <button onClick={this.remove.bind(this, index)}>remove</button>
-                                </div>
-                            </div>
+                                </Column>
+                            </Row>
                         )
                     })
                 }
