@@ -12,6 +12,10 @@ class Pagination extends React.Component {
     }
 
     render() {
+        if (this.props.count <= 1) {
+            return null;
+        }
+
         return (
             <div className="pagination">
                 {this.renderButtons()}

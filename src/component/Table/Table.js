@@ -57,32 +57,27 @@ class Table extends React.Component {
     }
 
     getPageCount(props) {
+        if (props.itemsPerPage < 1) {
+            return 0;
+        }
+
         return Math.ceil(this.props.data.length / props.itemsPerPage);
     }
 
     render() {
-        let tableBody = null;
         let emptyContent = null;
-        let pagination = null;
-
-        if (this.props.data.length > 0) {
-            tableBody = <Body data={this.getPagedData()} columns={this.props.columns}/>;
-        } else {
+        if (this.props.data.length <= 0) {
             emptyContent = <div className="empty">{this.props.emptyText}</div>;
-        }
-
-        if (this.props.itemsPerPage > 0) {
-            pagination = <Pagination current={this.state.currentPage}
-                                     count={this.getPageCount(this.props)}
-                                     onChange={this.setCurrentPage}/>;
         }
 
         return (
             <div className={this.props.className}>
                 <div style={{display: 'table', width: '100%'}}>
                     <Header items={this.props.header}/>
-                    {tableBody}
-                    {pagination}
+                    <Body data={this.getPagedData()} columns={this.props.columns}/>
+                    <Pagination current={this.state.currentPage}
+                                count={this.getPageCount(this.props)}
+                                onChange={this.setCurrentPage}/>
                 </div>
                 {emptyContent}
             </div>
