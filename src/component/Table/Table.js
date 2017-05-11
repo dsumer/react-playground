@@ -1,33 +1,90 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Header from "./Header/Header";
-import Row from "./Row/Row";
+import Body from "./Body/Body";
+import Pagination from "./Pagination/Pagination";
 
 class Table extends React.Component {
-    renderColumns(row, index) {
-        let columns = this.props.columns(row, index);
-        let newColumns = [];
-        for (let index = 0; index < columns.length; index++) {
-            newColumns.push(React.cloneElement(columns[index], {key: index}));
+    static defaultProps = {
+        emptyText: 'No Items found.',
+        itemsPerPage: 0
+    };
+    static propTypes = {
+        data: PropTypes.array.isRequired,
+        header: PropTypes.array.isRequired,
+        emptyText: PropTypes.string,
+        itemsPerPage: PropTypes.number,
+        onPageChange: PropTypes.func
+    };
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            currentPage: 0
+        };
+        this.setCurrentPage = this.setCurrentPage.bind(this);
+    }
+
+    componentWillReceiveProps(props) {
+        const pageCount = this.getPageCount(props);
+        if (this.state.currentPage >= pageCount) {
+            this.setCurrentPage(pageCount - 1);
         }
-        return newColumns;
+    }
+
+    setCurrentPage(page) {
+        if (page < 0) {
+            page = 0;
+        }
+
+        this.setState((prevState) => {
+            prevState.currentPage = page;
+            return prevState;
+        });
+        if (this.props.onPageChange) {
+            this.props.onPageChange(page);
+        }
+    }
+
+    getPagedData() {
+        if (this.props.itemsPerPage <= 0) {
+            return this.props.data;
+        } else {
+            const startIndex = this.state.currentPage * this.props.itemsPerPage;
+            return this.props.data.slice(startIndex, (startIndex + this.props.itemsPerPage));
+        }
+    }
+
+    getPageCount(props) {
+        return Math.ceil(this.props.data.length / props.itemsPerPage);
     }
 
     render() {
+        let tableBody = null;
+        let emptyContent = null;
+        let pagination = null;
+
+        if (this.props.data.length > 0) {
+            tableBody = <Body data={this.getPagedData()} columns={this.props.columns}/>;
+        } else {
+            emptyContent = <div className="empty">{this.props.emptyText}</div>;
+        }
+
+        if (this.props.itemsPerPage > 0) {
+            pagination = <Pagination current={this.state.currentPage}
+                                     count={this.getPageCount(this.props)}
+                                     onChange={this.setCurrentPage}/>;
+        }
+
         return (
-            <div className={this.props.className} style={{display: 'table', width: '100%'}}>
-                <Header items={this.props.header}/>
-                <div className="table-body" style={{display: 'table-row-group'}}>
-                    {this.props.children}
-                    {
-                        this.props.data.map((row, index) => {
-                            return (
-                                <Row key={index}>
-                                    {this.renderColumns(row, index)}
-                                </Row>
-                            )
-                        })
-                    }
+            <div className={this.props.className}>
+                <div style={{display: 'table', width: '100%'}}>
+                    <Header items={this.props.header}/>
+                    {tableBody}
+                    {pagination}
                 </div>
+                {emptyContent}
             </div>
         );
     }

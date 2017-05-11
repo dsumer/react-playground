@@ -99,7 +99,8 @@ class App extends React.Component {
                                <button onClick={this.remove.bind(this, index)}>remove</button>
                            </Column>
                        ];
-                   }}/>
+                   }}
+                   itemsPerPage={2}/>
         );
     }
 
