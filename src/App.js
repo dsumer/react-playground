@@ -1,6 +1,9 @@
 import React from "react";
 import {Table, Column} from "./component/Table";
+import DatePicker from "react-datepicker";
+import moment from "moment";
 import "./App.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 class App extends React.Component {
     constructor(props) {
@@ -9,18 +12,28 @@ class App extends React.Component {
             data: [
                 {
                     name: 'Test',
-                    age: 38
+                    age: 38,
+                    date: moment('27/01/1978', 'DD/MM/YYYY')
                 },
                 {
                     name: 'Alex',
-                    age: 24
+                    age: 24,
+                    date: moment()
                 },
                 {
                     name: 'Gistav',
-                    age: 13
+                    age: 13,
+                    date: moment('17/06/2001', 'DD/MM/YYYY')
                 }
             ]
         };
+    }
+
+    onChangeDate(index, newDate) {
+        this.setState((prevState) => {
+            prevState.data[index].date = newDate;
+            return prevState;
+        });
     }
 
     onChangeName(index, e) {
@@ -64,7 +77,7 @@ class App extends React.Component {
         });
     }
 
-    sortByNumber(prop, ascending) {
+    sortBy(prop, ascending) {
         this.setState((prevState) => {
             prevState.data.sort((a, b) => {
                 if (ascending) {
@@ -83,7 +96,8 @@ class App extends React.Component {
                    data={this.state.data}
                    header={[
                        {text: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
-                       {text: 'Age', sortBy: this.sortByNumber.bind(this, 'age')},
+                       {text: 'Age', sortBy: this.sortBy.bind(this, 'age')},
+                       {text: 'Date', sortBy: this.sortBy.bind(this, 'date')},
                        {text: 'Actions'}
                    ]}
                    columns={(row, index) => {
@@ -94,6 +108,13 @@ class App extends React.Component {
                            </Column>,
                            <Column>
                                {row.age}
+                           </Column>,
+                           <Column>
+                               <DatePicker
+                                   dateFormat="DD.MM.YYYY"
+                                   selected={row.date}
+                                   onChange={this.onChangeDate.bind(this, index)}
+                               />
                            </Column>,
                            <Column>
                                <button onClick={this.remove.bind(this, index)}>remove</button>
