@@ -61,7 +61,7 @@ class Table extends React.Component {
             return 0;
         }
 
-        return Math.ceil(this.props.data.length / props.itemsPerPage);
+        return Math.ceil(props.data.length / props.itemsPerPage);
     }
 
     render() {
