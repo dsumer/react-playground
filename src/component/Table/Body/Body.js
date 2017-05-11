@@ -19,9 +19,11 @@ class Body extends React.Component {
             <div className="table-body" style={{display: 'table-row-group'}}>
                 {
                     this.props.data.map((row, index) => {
+                        const realIndex = (this.props.currentPage * this.props.itemsPerPage) + index;
+
                         return (
                             <div key={index} className="table-row" style={{display: 'table-row'}}>
-                                {this.renderColumns(row, index)}
+                                {this.renderColumns(row, realIndex)}
                             </div>
                         )
                     })
