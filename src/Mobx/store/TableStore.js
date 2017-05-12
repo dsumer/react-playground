@@ -4,6 +4,7 @@ import moment from "moment";
 
 export default class TableStore {
     @observable data = [];
+    @observable filter = '';
 
     constructor(data) {
         for(var i = 0; i < data.length; i++) {
@@ -14,10 +15,13 @@ export default class TableStore {
         this.remove = this.remove.bind(this);
         this.sortBy = this.sortBy.bind(this);
         this.sortByName = this.sortByName.bind(this);
+        this.changeFilter = this.changeFilter.bind(this);
     }
 
     @computed get filteredData() {
-        return toJS(this.data);
+        return toJS(this.data.filter((row) => {
+            return row.name.toLowerCase().indexOf(this.filter.toLowerCase()) > -1;
+        }));
     }
 
     @action
@@ -56,5 +60,10 @@ export default class TableStore {
     @action
     remove(index) {
         this.data.splice(index, 1);
+    }
+
+    @action
+    changeFilter(event) {
+        this.filter = event.target.value;
     }
 }

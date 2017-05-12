@@ -34,8 +34,13 @@ class Mobx extends React.Component {
             <div>
                 <h1>Example with MobX</h1>
                 <div className="example-wrapper">
-                    <button onClick={this.tableStore.addItem}>add</button>
+                    <div>
+                        Filter: <input type="value" value={this.tableStore.filter} onChange={this.tableStore.changeFilter} />
+                    </div>
                     <br/>
+                    <div>
+                        <button onClick={this.tableStore.addItem}>add</button>
+                    </div>
                     <Table data={this.tableStore.filteredData}
                            header={[
                                {text: 'Name', sortBy: this.tableStore.sortByName},
