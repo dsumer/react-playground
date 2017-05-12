@@ -71,18 +71,20 @@ class Table extends React.Component {
         }
 
         return (
-            <div className={this.props.className}>
-                <div style={{display: 'table', width: '100%'}}>
-                    <Header items={this.props.header}/>
-                    <Body currentPage={this.state.currentPage}
-                          itemsPerPage={this.props.itemsPerPage}
-                          data={this.getPagedData()}
-                          columns={this.props.columns}/>
-                    <Pagination current={this.state.currentPage}
-                                count={this.getPageCount(this.props)}
-                                onChange={this.setCurrentPage}/>
+            <div>
+                <div className={'table ' + this.props.className}>
+                    <div style={{display: 'table', width: '100%'}}>
+                        <Header items={this.props.header}/>
+                        <Body currentPage={this.state.currentPage}
+                              itemsPerPage={this.props.itemsPerPage}
+                              data={this.getPagedData()}
+                              columns={this.props.columns}/>
+                    </div>
+                    {emptyContent}
                 </div>
-                {emptyContent}
+                <Pagination current={this.state.currentPage}
+                            count={this.getPageCount(this.props)}
+                            onChange={this.setCurrentPage}/>
             </div>
         );
     }
