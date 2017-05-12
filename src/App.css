@@ -1,18 +1,19 @@
-.my-table .table-header > div {
-    border-bottom: 1px solid black;
+.example-wrapper {
+    padding: 0px 20px;
 }
-.my-table .col-0 {
-    width: 10%;
+
+.table {
+    margin-top: 30px;
+    border-left: 1px solid gray;
+    border-top: 1px solid gray;
 }
-.my-table .col-2 {
-    width: 20%;
+
+.table .table-row .table-column, .table .table-header > div, .table .empty {
+    padding: 5px;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
 }
-.my-table .pagination button.active {
-    color: red;
-}
-.my-table .empty {
-    width: 100%;
-    display: inline-block;
-    text-align: center;
-    padding: 10px;
+
+.pagination {
+    margin-top: 10px;
 }
