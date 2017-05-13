@@ -16,6 +16,10 @@ const Style = styled.div`
         display: table;
     }
 `;
+
+/**
+ * Main Table Component.
+ */
 class Table extends React.Component {
     static defaultProps = {
         emptyText: 'No Items found.',

@@ -10,6 +10,10 @@ const Style = styled.div`
         display: table-cell;
     }
 `;
+
+/**
+ * Column Component - is used by the app to indicate which Columns should be rendered on the table, styled for mobile support.
+ */
 function Column(props) {
     return <Style className="table-column" mobileWidth={props.mobileWidth}>{props.children}</Style>
 }

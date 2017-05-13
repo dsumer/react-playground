@@ -29,6 +29,10 @@ const Style = styled.div`
         display: block;
     }
 `;
+
+/**
+ * ColumnWrapper - wrapping a columns content and its description. Accessible and with mobile view support.
+ */
 class ColumnWrapper extends React.Component {
     render() {
         return (

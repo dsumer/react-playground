@@ -11,6 +11,10 @@ const Style = styled.div`
         display: table-header-group;
     }
 `;
+
+/**
+ * Header Component - containing all given header columns.
+ */
 class Header extends React.Component {
     constructor(props) {
         super(props);

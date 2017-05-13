@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * Pagination Component - rendering buttons for switching between the pages.
+ */
 class Pagination extends React.Component {
     renderButtons() {
         let pages = [];

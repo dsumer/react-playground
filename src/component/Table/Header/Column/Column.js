@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
+/**
+ * Header Column - also displaying sorting indicators.
+ */
 const Column = styled.div`
     display: table-cell;
     position: relative;

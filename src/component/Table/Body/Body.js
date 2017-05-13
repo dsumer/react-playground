@@ -12,6 +12,10 @@ const Style = styled.div`
         display: table-row-group;
     }
 `;
+
+/**
+ * Body Component - containing all rows and their columns.
+ */
 class Body extends React.Component {
     renderColumns(row, index) {
         let columns = this.props.columns(row, index);
