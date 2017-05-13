@@ -1,34 +1,49 @@
-import React from 'react';
+import React from "react";
+import styled from "styled-components";
+import ColumnWrapper from "./ColumnWrapper/ColumnWrapper";
+import TableRow from "./TableRow/TableRow";
 
+const Style = styled.div`
+    @media (max-width: ${props => props.mobileWidth}px) {
+        display: block;
+    }
+    
+    @media (min-width: ${props => (props.mobileWidth + 1)}px) {
+        display: table-row-group;
+    }
+`;
 class Body extends React.Component {
     renderColumns(row, index) {
         let columns = this.props.columns(row, index);
         let newColumns = [];
         for (let index = 0; index < columns.length; index++) {
-            newColumns.push(React.cloneElement(columns[index], {key: index}));
+            newColumns.push(React.cloneElement(columns[index], {key: index, mobileWidth: this.props.mobileWidth},
+                <ColumnWrapper mobileWidth={this.props.mobileWidth} content={this.props.header[index].content}>
+                    {columns[index].props.children}
+                </ColumnWrapper>));
         }
         return newColumns;
     }
 
-    render () {
+    render() {
         if (this.props.data.length <= 0) {
             return null;
         }
 
         return (
-            <div className="table-body" style={{display: 'table-row-group'}}>
+            <Style className="table-body" mobileWidth={this.props.mobileWidth}>
                 {
                     this.props.data.map((row, index) => {
                         const realIndex = (this.props.currentPage * this.props.itemsPerPage) + index;
 
                         return (
-                            <div key={index} className="table-row" style={{display: 'table-row'}}>
+                            <TableRow key={index} className="table-row" mobileWidth={this.props.mobileWidth}>
                                 {this.renderColumns(row, realIndex)}
-                            </div>
+                            </TableRow>
                         )
                     })
                 }
-            </div>
+            </Style>
         );
     }
 }

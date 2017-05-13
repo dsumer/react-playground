@@ -1,4 +1,4 @@
 import Table from "./Table";
-import Column from "./Column/Column";
+import Column from "./Body/Column/Column";
 
 export {Table, Column};

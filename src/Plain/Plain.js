@@ -110,10 +110,10 @@ class Plain extends React.Component {
             <Table className={className}
                    data={this.getFilteredData()}
                    header={[
-                       {text: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
-                       {text: 'Age', sortBy: this.sortBy.bind(this, 'age')},
-                       {text: 'Date', sortBy: this.sortBy.bind(this, 'date')},
-                       {text: 'Actions'}
+                       {content: 'Name', sortBy: this.sortByAlphabetical.bind(this, 'name')},
+                       {content: 'Age', sortBy: this.sortBy.bind(this, 'age')},
+                       {content: 'Date', sortBy: this.sortBy.bind(this, 'date')},
+                       {content: 'Actions'}
                    ]}
                    columns={(row, index) => {
                        return [

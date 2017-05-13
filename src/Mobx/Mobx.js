@@ -43,10 +43,10 @@ class Mobx extends React.Component {
                     </div>
                     <Table data={this.tableStore.filteredData}
                            header={[
-                               {text: 'Name', sortBy: this.tableStore.sortByName},
-                               {text: 'Age', sortBy: this.tableStore.sortBy.bind(null, 'age')},
-                               {text: 'Date', sortBy: this.tableStore.sortBy.bind(null, 'date')},
-                               {text: 'Actions'}
+                               {content: 'Name', sortBy: this.tableStore.sortByName},
+                               {content: 'Age', sortBy: this.tableStore.sortBy.bind(null, 'age')},
+                               {content: 'Date', sortBy: this.tableStore.sortBy.bind(null, 'date')},
+                               {content: 'Actions'}
                            ]}
                            columns={(row, index) => {
                                return [

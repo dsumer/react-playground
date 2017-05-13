@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const Column = styled.div`
     display: table-cell;
     position: relative;
+    font-weight: bold;
     cursor: ${props => props.sortable ? 'pointer' : 'inherit'};
     
     ${props => (props.sortable && props.active && props.ascending) ? `

@@ -1,6 +1,16 @@
 import React from 'react';
 import Column from './Column/Column';
+import styled from 'styled-components';
 
+const Style = styled.div`
+    @media (max-width: ${props => props.mobileWidth}px) {
+        display: none;
+    }
+    
+    @media (min-width: ${props => (props.mobileWidth + 1)}px) {
+        display: table-header-group;
+    }
+`;
 class Header extends React.Component {
     constructor(props) {
         super(props);
@@ -29,7 +39,7 @@ class Header extends React.Component {
 
     render() {
         return (
-            <div className="table-header" style={{display: 'table-header-group'}}>
+            <Style className="table-header" mobileWidth={this.props.mobileWidth}>
                 {
                     this.props.items.map((column, index) => {
                         return <Column key={index}
@@ -37,10 +47,11 @@ class Header extends React.Component {
                                        className={"col-" + index}
                                        sortable={column.sortBy}
                                        active={this.sortBy.index === index}
-                                       ascending={this.sortBy.ascending}>{column.text}</Column>;
+                                       ascending={this.sortBy.ascending}
+                                       aria-hidden="true">{column.content}</Column>;
                     })
                 }
-            </div>
+            </Style>
         );
     }
 }
