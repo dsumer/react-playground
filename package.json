@@ -14,7 +14,9 @@
     "styled-components": "^1.4.6"
   },
   "devDependencies": {
-    "custom-react-scripts": "^0.0.23"
+    "custom-react-scripts": "^0.0.23",
+    "enzyme": "^2.8.2",
+    "react-test-renderer": "^15.5.4"
   },
   "scripts": {
     "start": "react-scripts start --scripts-version custom-react-scripts",
