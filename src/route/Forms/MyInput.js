@@ -30,7 +30,7 @@ export default class MyInput extends React.Component {
             }
         }
 
-        if (errorMessages && errorMessages.length <= 0) {
+        if (!errorMessages || errorMessages.length <= 0) {
             return null;
         }
 
