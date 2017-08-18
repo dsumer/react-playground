@@ -1,0 +1,38 @@
+.table {
+    margin-top: 30px;
+}
+
+.table .table-row {
+    border-top: 1px solid gray;
+    border-left: 1px solid gray;
+}
+
+.table .table-row .table-column, .table .table-header > div, .table .empty {
+    padding: 5px;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+.pagination {
+    margin-top: 10px;
+}
+
+@media (max-width: 800px) {
+    .table .table-row {
+        border-right: 1px solid gray;
+        border-bottom: 1px solid gray;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width: 801px) {
+    .table {
+        border-top: 1px solid gray;
+        border-left: 1px solid gray;
+    }
+
+    .table .table-row {
+        border: none;
+    }
+}

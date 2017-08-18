@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Column} from "../component/Table";
+import {Table, Column} from "../../../component/Table";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import "./Plain.css";

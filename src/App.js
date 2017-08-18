@@ -1,16 +1,16 @@
 import React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
-import Plain from './Plain/Plain'
-import Mobx from './Mobx/Mobx'
+import Header from './Header'
+import Main from './Main'
 
 class App extends React.Component {
 
     render() {
         return (
             <div>
-                <Plain />
-                <Mobx />
+                <Header />
+                <Main />
             </div>
         );
     }
