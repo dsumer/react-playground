@@ -1,24 +1,31 @@
 import React from "react";
 import PropTypes from "prop-types";
+import autoBind from "auto-bind";
 
 function Input(WrappedComponent) {
-    return class Input extends React.Component {
-        constructor(props) {
-            super(props);
+    class Input extends React.Component {
+        constructor(props, context) {
+            super(props, context);
 
             this.state = {
                 value: props.value,
                 pristine: true,
-                errors: ['test']
+                errors: []
             };
 
-            this.isRequired = this.isRequired.bind(this);
-            this.isPristine = this.isPristine.bind(this);
-            this.isValid = this.isValid.bind(this);
-            this.getValue = this.getValue.bind(this);
-            this.setValue = this.setValue.bind(this);
-            this.getErrorMessages = this.getErrorMessages.bind(this);
-            this.onBlur = this.onBlur.bind(this);
+            autoBind(this);
+        }
+
+        componentWillMount() {
+            this.context._reactForm.attach(this);
+        }
+
+        getName() {
+            return this.props.name;
+        }
+
+        hasName(name) {
+            return this.props.name === name;
         }
 
         isRequired() {
@@ -38,7 +45,7 @@ function Input(WrappedComponent) {
         }
 
         setValue(value) {
-            const isTouchedOnChange = this.props.enableTouchedOnChange;
+            const isTouchedOnChange = this.context._reactForm.enableTouchedOnChange;
             if (isTouchedOnChange && this.isPristine()) {
                 this.setState({
                     pristine: false
@@ -47,6 +54,8 @@ function Input(WrappedComponent) {
 
             this.setState({
                 value: value
+            }, () => {
+                this.context._reactForm.validate(this);
             });
         }
 
@@ -60,6 +69,23 @@ function Input(WrappedComponent) {
                     pristine: false
                 });
             }
+        }
+
+        async validate() {
+            return new Promise((resolve) => {
+                let valid = this.state.value === 'asd';
+                if (valid) {
+                    this.setState({
+                        errors: []
+                    });
+                } else {
+                    this.setState({
+                        errors: ['not asd!']
+                    });
+                }
+
+                resolve(valid);
+            });
         }
 
         render() {
@@ -79,12 +105,13 @@ function Input(WrappedComponent) {
             );
         }
     }
+    Input.propTypes = {
+        name: PropTypes.string.isRequired
+    };
+    Input.contextTypes = {
+        _reactForm: PropTypes.object
+    };
+    return Input;
 }
-Input.propTypes = {
-    enableTouchedOnChange: PropTypes.bool
-};
-Input.defaultProps = {
-    enableTouchedOnChange: false
-};
 
 export default Input;

@@ -28,7 +28,6 @@ export default class CustomInput extends React.Component {
 
         return (
             <div>
-                <div>isPristine: {"" + this.props.isPristine()}</div>
                 <span>{this.props.label} {this.props.isRequired() ? '*' : null}</span>
                 <input
                     className={className}
