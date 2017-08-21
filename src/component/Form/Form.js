@@ -5,13 +5,15 @@ import validationRules from "./validationRules";
 
 export default class Form extends React.Component {
     static validationRules = Object.assign({}, validationRules);
-    static addValidationRule(name, func) {
+    static addValidationRule(name, func, createsDependencies) {
         validationRules[name] = func;
+        validationRules[name].createsDependencies = createsDependencies;
     }
 
     constructor(props) {
         super(props);
 
+        this.initialized = false;
         this.inputs = [];
         this.valid = false;
         this.validatingInputs = [];
@@ -25,9 +27,19 @@ export default class Form extends React.Component {
                 enableTouchedOnChange: this.props.enableTouchedOnChange,
                 attach: this.attachInput,
                 detach: this.detachInput,
-                validate: this.validateInput
+                validate: this.validateInput,
+                getValues: this.getValues
             }
         };
+    }
+
+    componentDidMount() {
+        this.initialized = true;
+        this.validate();
+    }
+
+    componentWillUnmount() {
+        this.initialized = false;
     }
 
     onSubmit(event) {
@@ -71,7 +83,11 @@ export default class Form extends React.Component {
             throw new Error(`There already exists an input with the name "${newInput.getName()}"`);
         }
         this.inputs.push(newInput);
-        this.validateInput(newInput);
+        if (this.initialized) {
+            this.validateInput(newInput);
+        } else {
+            this.addValidatingInput(newInput);
+        }
     }
 
     detachInput(input) {
@@ -80,12 +96,15 @@ export default class Form extends React.Component {
     }
 
     addValidatingInput(input) {
-        if (this.validatingInputs.indexOf(input) > -1) {
+        if (this.validatingInputs.indexOf(input.getName()) > -1) {
             return;
         }
 
-        // TODO: add all dependent inputs
         this.validatingInputs.push(input.getName());
+        const dependentInputs = this.inputs.filter((depInput) => depInput.dependencies.indexOf(input.getName()) > -1);
+        for (let dependency of dependentInputs) {
+            this.addValidatingInput(dependency);
+        }
         this.valid = false;
     }
 

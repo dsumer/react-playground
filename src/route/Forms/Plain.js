@@ -48,22 +48,24 @@ export default class Plain extends React.Component {
     }
 
     render() {
-        let customInput = null;
+        let customInput = null
+        let equalsFields = ['email'];
         if (this.state.showEmail2) {
+            equalsFields.push('email2');
             customInput = <CustomInput name="email2"
-                         label="Email2"
-                         value=""
-                         validations={{
-                             isRequired: true,
-                         }}
-                         validationErrors={{
-                             isRequired: 'Your email2 address is required'
-                         }}/>;
+                                       label="Email2"
+                                       value=""
+                                       validations={{
+                                           isRequired: true,
+                                       }}
+                                       validationErrors={{
+                                           isRequired: 'Your email2 address is required'
+                                       }}/>;
         }
 
         return (
             <div className="plain">
-                <input type="checkbox" checked={this.state.showEmail2} onChange={this.changeEmail2} /> Show Email2
+                <input type="checkbox" checked={this.state.showEmail2} onChange={this.changeEmail2}/> Show Email2
                 <Form onSubmit={this.submit}
                       onValidSubmit={this.validSubmit}
                       onInvalidSubmit={this.invalidSubmit}
@@ -71,7 +73,7 @@ export default class Plain extends React.Component {
                       onInvalid={this.onInvalid}>
                     <CustomInput name="email"
                                  label="Email"
-                                 value=""
+                                 value="a"
                                  validations={{
                                      isRequired: true,
                                      isEmail: true,
@@ -82,6 +84,15 @@ export default class Plain extends React.Component {
                                      isEmail: 'You have to type valid email',
                                      maxLength: 'You can not type in more than 50 characters',
                                      isRequired: 'Your email address is required'
+                                 }}/>
+                    <CustomInput name="email_confirm"
+                                 label="Email bestätigen"
+                                 value=""
+                                 validations={{
+                                     equalsFields: equalsFields
+                                 }}
+                                 validationErrors={{
+                                     equalsFields: 'Please type in your email correctly'
                                  }}/>
                     {customInput}
                     <button type="submit" disabled={!this.state.canSubmit}>Submit</button>

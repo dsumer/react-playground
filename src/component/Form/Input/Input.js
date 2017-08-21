@@ -8,6 +8,7 @@ function Input(WrappedComponent) {
         constructor(props, context) {
             super(props, context);
 
+            this.dependencies = [];
             this.state = {
                 value: props.value,
                 pristine: true,
@@ -16,6 +17,19 @@ function Input(WrappedComponent) {
             };
 
             autoBind(this);
+
+            for (let validation in props.validations) {
+                const validationRule = Form.validationRules[validation];
+                if (validationRule && validationRule.createsDependencies) {
+                    if (!Array.isArray(props.validations[validation])) {
+                        this.addDependency(props.validations[validation]);
+                    } else {
+                        for (let dependency of props.validations[validation]) {
+                            this.addDependency(dependency);
+                        }
+                    }
+                }
+            }
         }
 
         componentWillMount() {
@@ -24,6 +38,16 @@ function Input(WrappedComponent) {
 
         componentWillUnmount() {
             this.context._reactForm.detach(this);
+        }
+
+        addDependency(dependency) {
+            if (dependency === this.getName()) {
+                throw new Error('An input cannot have itself as an dependency. Check your validation rules.')
+            }
+
+            if (this.dependencies.indexOf(dependency) < 0) {
+                this.dependencies.push(dependency);
+            }
         }
 
         getName() {
@@ -105,7 +129,7 @@ function Input(WrappedComponent) {
                 const ruleName = validationRule[0];
                 const ruleConditions = validationRule[1];
                 if (availableRules[ruleName]) {
-                    const valid = await availableRules[ruleName](this.getValue(), ruleConditions);
+                    const valid = await availableRules[ruleName](this.context._reactForm.getValues(), this.getValue(), ruleConditions);
                     if (!valid) {
                         allValid = false;
 
