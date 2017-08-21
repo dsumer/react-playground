@@ -1,20 +1,23 @@
 import React from "react";
-import Formsy from 'formsy-react';
-import MyInput from './MyInput';
+import Formsy from "formsy-react";
+import MyInput from "./MyInput";
+import Plain from "./Plain";
 
-import './Forms.css';
+import "./Forms.css";
 
 class Forms extends React.Component {
 
     constructor(props) {
         super(props);
 
+        this.form = null;
         this.state = {
             canSubmit: false
         };
 
         this.enableButton = this.enableButton.bind(this);
         this.disableButton = this.disableButton.bind(this);
+        this.validate = this.validate.bind(this);
         this.submit = this.submit.bind(this);
     }
 
@@ -30,6 +33,25 @@ class Forms extends React.Component {
         });
     }
 
+    validate(values) {
+        if (values.post) {
+            window.fetch('https://jsonplaceholder.typicode.com/posts/' + values.post).then((response) => {
+                response.json().then((data) => {
+                    if (data.userId) {
+                        this.form.updateInputsWithError({
+                            post: null
+                        });
+                    } else {
+                        this.form.updateInputsWithError({
+                            post: 'No UserId!'
+                        });
+                    }
+                    this.form.validateForm();
+                });
+            });
+        }
+    }
+
     submit(model) {
         console.log("Submit: ", model);
     }
@@ -38,7 +60,14 @@ class Forms extends React.Component {
         return (
             <div>
                 <h1>Form Validation</h1>
-                <Formsy.Form onValidSubmit={this.submit} onValid={this.enableButton} onInvalid={this.disableButton}>
+                <Plain />
+                <Formsy.Form onValidSubmit={this.submit}
+                             onValid={this.enableButton}
+                             onInvalid={this.disableButton}
+                             onChange={this.validate}
+                             ref={(form) => {
+                                 this.form = form;
+                             }}>
                     <MyInput name="email"
                              label="Email"
                              value=""
@@ -60,6 +89,12 @@ class Forms extends React.Component {
                              }}
                              validationErrors={{
                                  equalsField: 'Please type in your email correctly'
+                             }}/>
+                    <MyInput name="post"
+                             label="Post"
+                             value=""
+                             validationErrors={{
+                                 isRequired: 'Your Post is required'
                              }}
                              required/>
                     <button type="submit" disabled={!this.state.canSubmit}>Submit</button>

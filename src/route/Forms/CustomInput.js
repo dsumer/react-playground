@@ -1,33 +1,13 @@
 import React from "react";
-import Formsy from "formsy-react";
+import Input from "../../component/Form/Input/Input";
 
-@Formsy.Decorator()
-export default class MyInput extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            pristine: true
-        };
-        this.onBlur = this.onBlur.bind(this);
-    }
-
-    onBlur() {
-        if (this.state.pristine) {
-            this.setState({
-                pristine: false
-            });
-        }
-    }
+@Input
+export default class CustomInput extends React.Component {
 
     renderErrors() {
         let errorMessages = [];
-        if (!this.state.pristine) {
+        if (!this.props.isPristine()) {
             errorMessages = this.props.getErrorMessages();
-            if (this.props.showRequired()) {
-                errorMessages = this.props.validationErrors.isRequired;
-            }
         }
 
         if (!errorMessages || errorMessages.length <= 0) {
@@ -42,17 +22,18 @@ export default class MyInput extends React.Component {
 
     render() {
         let className = '';
-        if (!this.state.pristine) {
-            className = this.props.showRequired() ? 'required' : this.props.showError() ? 'error' : null;
+        if (!this.props.isPristine()) {
+            className = this.props.isValid() ? null : 'error';
         }
 
         return (
             <div>
+                <div>isPristine: {"" + this.props.isPristine()}</div>
                 <span>{this.props.label} {this.props.isRequired() ? '*' : null}</span>
                 <input
                     className={className}
                     value={this.props.getValue()}
-                    onChange={(e) => this.props.setValue(e.target.value)} onBlur={this.onBlur}/>
+                    onChange={(e) => this.props.setValue(e.target.value)} onBlur={this.props.onBlur}/>
                 {this.renderErrors()}
             </div>
         );
