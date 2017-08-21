@@ -9,6 +9,10 @@ function Input(WrappedComponent) {
             super(props, context);
 
             this.dependencies = [];
+            for (let dependency of props.dependencies) {
+                this.addDependency(dependency);
+            }
+
             this.state = {
                 value: props.value,
                 pristine: true,
@@ -128,14 +132,19 @@ function Input(WrappedComponent) {
             for (let validationRule of validationRules) {
                 const ruleName = validationRule[0];
                 const ruleConditions = validationRule[1];
+                let valid = true;
                 if (availableRules[ruleName]) {
-                    const valid = await availableRules[ruleName](this.context._reactForm.getValues(), this.getValue(), ruleConditions);
-                    if (!valid) {
-                        allValid = false;
+                    valid = await availableRules[ruleName](this.context._reactForm.getValues(), this.getValue(), ruleConditions);
+                } else if (typeof ruleConditions === 'function') {
+                    valid = await ruleConditions(this.context._reactForm.getValues(), this.getValue());
+                }
 
-                        if (this.props.validationErrors[ruleName]) {
-                            errors.push(this.props.validationErrors[ruleName]);
-                        }
+                if (!valid) {
+                    allValid = false;
+
+                    if (this.props.validationErrors[ruleName]) {
+                        // TODO: add support for arguments, maybe even different errormessages per validator?
+                        errors.push(this.props.validationErrors[ruleName]);
                     }
                 }
             }
@@ -168,7 +177,11 @@ function Input(WrappedComponent) {
     Input.propTypes = {
         name: PropTypes.string.isRequired,
         validations: PropTypes.object,
-        validationErrors: PropTypes.object
+        validationErrors: PropTypes.object,
+        dependencies: PropTypes.arrayOf(PropTypes.string)
+    };
+    Input.defaultProps = {
+        dependencies: []
     };
     Input.contextTypes = {
         _reactForm: PropTypes.object

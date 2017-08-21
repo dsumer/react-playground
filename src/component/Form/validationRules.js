@@ -21,6 +21,7 @@ const rules = {
         return allValid;
     }
 };
+// TODO: add more basic rules
 rules.equalsField.createsDependencies = true;
 rules.equalsFields.createsDependencies = true;
 export default rules;

@@ -47,6 +47,29 @@ export default class Plain extends React.Component {
         });
     }
 
+    asyncPostValidator(values, value) {
+        return new Promise((resolve) => {
+            if (!value) {
+                resolve(true);
+                return;
+            }
+            if (values.email == 'störtpost') {
+                resolve(false);
+                return;
+            }
+
+            window.fetch('https://jsonplaceholder.typicode.com/posts/' + value).then((response) => {
+                response.json().then((data) => {
+                    if (data.userId) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                });
+            });
+        });
+    }
+
     render() {
         let customInput = null
         let equalsFields = ['email'];
@@ -95,6 +118,17 @@ export default class Plain extends React.Component {
                                      equalsFields: 'Please type in your email correctly'
                                  }}/>
                     {customInput}
+                    <CustomInput name="post"
+                                 label="Post"
+                                 value=""
+                                 dependencies={['email']}
+                                 validations={{
+                                     hasPostId: this.asyncPostValidator
+                                 }}
+                                 validationErrors={{
+                                     hasPostId: 'No PostId!'
+                                 }}
+                                 required/>
                     <button type="submit" disabled={!this.state.canSubmit}>Submit</button>
                 </Form>
             </div>
