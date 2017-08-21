@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import autoBind from "auto-bind";
+import Form from "../Form";
 
 function Input(WrappedComponent) {
     class Input extends React.Component {
@@ -10,6 +11,7 @@ function Input(WrappedComponent) {
             this.state = {
                 value: props.value,
                 pristine: true,
+                valid: false,
                 errors: []
             };
 
@@ -18,6 +20,10 @@ function Input(WrappedComponent) {
 
         componentWillMount() {
             this.context._reactForm.attach(this);
+        }
+
+        componentWillUnmount() {
+            this.context._reactForm.detach(this);
         }
 
         getName() {
@@ -29,7 +35,7 @@ function Input(WrappedComponent) {
         }
 
         isRequired() {
-            return !!this.props.required;
+            return this.props.validations.isRequired;
         }
 
         isPristine() {
@@ -37,7 +43,7 @@ function Input(WrappedComponent) {
         }
 
         isValid() {
-            return this.state.errors.length < 1;
+            return this.state.valid && this.state.errors.length < 1;
         }
 
         getValue() {
@@ -45,6 +51,7 @@ function Input(WrappedComponent) {
         }
 
         setValue(value) {
+            // TODO: check if needed, maybe instead just wait 500ms for validation (and cancel if value gets changed before)
             const isTouchedOnChange = this.context._reactForm.enableTouchedOnChange;
             if (isTouchedOnChange && this.isPristine()) {
                 this.setState({
@@ -73,18 +80,47 @@ function Input(WrappedComponent) {
 
         async validate() {
             return new Promise((resolve) => {
-                let valid = this.state.value === 'asd';
-                if (valid) {
-                    this.setState({
-                        errors: []
-                    });
-                } else {
-                    this.setState({
-                        errors: ['not asd!']
-                    });
-                }
+                this.runValidationRules(resolve);
+            });
+        }
 
-                resolve(valid);
+        getValidationRules() {
+            let validationRules = [];
+            for (let name in this.props.validations) {
+                const conditions = this.props.validations[name];
+                if (conditions) {
+                    validationRules.push([name, conditions]);
+                }
+            }
+            return validationRules;
+        }
+
+        async runValidationRules(resolve) {
+            let errors = [];
+            const validationRules = this.getValidationRules();
+
+            const availableRules = Form.validationRules;
+            let allValid = true;
+            for (let validationRule of validationRules) {
+                const ruleName = validationRule[0];
+                const ruleConditions = validationRule[1];
+                if (availableRules[ruleName]) {
+                    const valid = await availableRules[ruleName](this.getValue(), ruleConditions);
+                    if (!valid) {
+                        allValid = false;
+
+                        if (this.props.validationErrors[ruleName]) {
+                            errors.push(this.props.validationErrors[ruleName]);
+                        }
+                    }
+                }
+            }
+
+            this.setState({
+                valid: allValid,
+                errors: errors
+            }, () => {
+                resolve(allValid);
             });
         }
 
@@ -106,7 +142,9 @@ function Input(WrappedComponent) {
         }
     }
     Input.propTypes = {
-        name: PropTypes.string.isRequired
+        name: PropTypes.string.isRequired,
+        validations: PropTypes.object,
+        validationErrors: PropTypes.object
     };
     Input.contextTypes = {
         _reactForm: PropTypes.object

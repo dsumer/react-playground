@@ -1,8 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import autoBind from "auto-bind";
+import validationRules from "./validationRules";
 
 export default class Form extends React.Component {
+    static validationRules = Object.assign({}, validationRules);
+    static addValidationRule(name, func) {
+        validationRules[name] = func;
+    }
+
     constructor(props) {
         super(props);
 
@@ -18,13 +24,10 @@ export default class Form extends React.Component {
             _reactForm: {
                 enableTouchedOnChange: this.props.enableTouchedOnChange,
                 attach: this.attachInput,
+                detach: this.detachInput,
                 validate: this.validateInput
             }
         };
-    }
-
-    componentDidMount() {
-        this.validate();
     }
 
     onSubmit(event) {
@@ -67,39 +70,53 @@ export default class Form extends React.Component {
         if (this.inputs.some((input) => input.hasName(newInput.getName()))) {
             throw new Error(`There already exists an input with the name "${newInput.getName()}"`);
         }
-
         this.inputs.push(newInput);
+        this.validateInput(newInput);
+    }
+
+    detachInput(input) {
+        this.inputs.splice(this.inputs.indexOf(input), 1);
+        this.validate();
+    }
+
+    addValidatingInput(input) {
+        if (this.validatingInputs.indexOf(input) > -1) {
+            return;
+        }
+
+        // TODO: add all dependent inputs
+        this.validatingInputs.push(input.getName());
+        this.valid = false;
     }
 
     validate() {
-        this.valid = false;
-        this.validatingInputs.push(...this.inputs.map((input) => input.getName()));
+        for (let input of this.inputs) {
+            this.addValidatingInput(input);
+        }
         this.onInvalid();
 
         this.startValidation();
     }
 
     validateInput(input) {
-        // TODO: add all dependent inputs
-        this.validatingInputs.push(input.getName());
-        this.valid = false;
+        this.addValidatingInput(input);
         this.onInvalid();
 
         this.startValidation();
     }
 
     async startValidation() {
-        let allValid = true;
-        let validatingInputs = this.validatingInputs.map((inputName) => this.inputs.find((input) => input.hasName(inputName)));
-        for (let input of validatingInputs) {
-            const valid = await input.validate();
-            if (!valid) {
-                allValid = false;
+        if (this.validatingInputs.length > 0) {
+            const validatingInputName = this.validatingInputs.splice(0, 1)[0];
+            const input = this.inputs.find((input) => input.hasName(validatingInputName));
+            if (input) {
+                await input.validate();
             }
-            this.validatingInputs.splice(this.validatingInputs.indexOf(input.getName()), 1);
+            this.startValidation();
+        } else {
+            let allValid = !this.inputs.some((input) => !input.isValid());
+            this.validationFinished(allValid);
         }
-
-        this.validationFinished(allValid);
     }
 
     validationFinished(valid) {

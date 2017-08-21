@@ -8,7 +8,8 @@ export default class Plain extends React.Component {
         super(props);
 
         this.state = {
-            canSubmit: false
+            canSubmit: false,
+            showEmail2: true
         };
 
         autoBind(this);
@@ -40,9 +41,29 @@ export default class Plain extends React.Component {
         });
     }
 
+    changeEmail2(event) {
+        this.setState({
+            showEmail2: event.target.checked
+        });
+    }
+
     render() {
+        let customInput = null;
+        if (this.state.showEmail2) {
+            customInput = <CustomInput name="email2"
+                         label="Email2"
+                         value=""
+                         validations={{
+                             isRequired: true,
+                         }}
+                         validationErrors={{
+                             isRequired: 'Your email2 address is required'
+                         }}/>;
+        }
+
         return (
             <div className="plain">
+                <input type="checkbox" checked={this.state.showEmail2} onChange={this.changeEmail2} /> Show Email2
                 <Form onSubmit={this.submit}
                       onValidSubmit={this.validSubmit}
                       onInvalidSubmit={this.invalidSubmit}
@@ -50,17 +71,19 @@ export default class Plain extends React.Component {
                       onInvalid={this.onInvalid}>
                     <CustomInput name="email"
                                  label="Email"
-                                 value="as"
+                                 value=""
                                  validations={{
+                                     isRequired: true,
                                      isEmail: true,
-                                     maxLength: 50
+                                     maxLength: 50,
+                                     equals: "asd"
                                  }}
                                  validationErrors={{
                                      isEmail: 'You have to type valid email',
                                      maxLength: 'You can not type in more than 50 characters',
                                      isRequired: 'Your email address is required'
-                                 }}
-                                 required/>
+                                 }}/>
+                    {customInput}
                     <button type="submit" disabled={!this.state.canSubmit}>Submit</button>
                 </Form>
             </div>
